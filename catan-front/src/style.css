@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap');
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-image: url(/img/catan-bg.jpg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.header {
+  background-color: #8f1d27;
+  border-bottom: 2px solid #ffdd09;
+}
+
+.header h1 {
+  color: #ffdd09;
+  text-transform: uppercase;
+  letter-spacing: 10px;
+  font-size: 4rem;
+  font-weight: 800;
+  filter: drop-shadow(5px 5px 3px black);
+  font-family: 'MedievalSharp', sans-serif; 
+}
+
+.header a {
+  text-decoration: none;
+}
+
+.main {
+  flex: 1;
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(15px);
+  border-right: 1px solid #45403d6d;
+  border-left: 1px solid #45403d6d;
+}
+
+.registro {
+  max-width: 400px;
+}
+
+.registro h3 {
+  color: #8f1d27;
+  filter: drop-shadow(1px 1px 1px black);
+  font-family: 'MedievalSharp', sans-serif;
+  letter-spacing: 5px;
+  font-weight: 800;
+}
+
+footer {
+  background-color: #45403d;
+  border-top: 2px solid #ffdd09
+}
+
+.btn-outline-warning {
+  color: #ffdd09;
+  border-color: #ffdd09;
+}
+
+.btn-outline-warning:hover {
+  color: #45403d;
+  background-color: #ffdd09;
+  border-color: #ffdd09;
+}
+
+.btn-outline-danger {
+  color: #8f1d27;
+  border-color: #8f1d27;
+}
+
+.btn-outline-danger:hover {
+  color: #FFF;
+  background-color: #8f1d27;
+  border-color: #8f1d27;
+}
+
+.no-register a {
+  color: #8f1d27;
+}
