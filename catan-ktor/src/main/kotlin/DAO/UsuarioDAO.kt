@@ -1,11 +1,12 @@
 package com.DAO
 
 import com.modelo.Usuario
+import com.modelo.UsuarioLogin
 import com.utils.Seguridad
 
 class UsuarioDAO {
 
-    fun registrar(usuario: Usuario): Boolean {
+    fun registrar(usuario: UsuarioLogin): Boolean {
         val sql = "INSERT INTO usuarios (email, password) VALUES (?, ?)"
         val connection = Conexion.getConnection()
 
@@ -23,7 +24,7 @@ class UsuarioDAO {
         return false
     }
 
-    fun login(usuario: Usuario): Usuario? {
+    fun login(usuario: UsuarioLogin): Usuario? {
         val sql = "SELECT * FROM usuarios WHERE email = ?"
         val connection = Conexion.getConnection()
         connection?.use {
@@ -35,9 +36,12 @@ class UsuarioDAO {
                 val passEncriptada = resultSet.getString("password")
 
                 if (Seguridad.verificarPass(usuario.password, passEncriptada)) {
+                    val id = resultSet.getInt("id")
+                    val email = resultSet.getString("email")
 
                     return Usuario(
-                        email = resultSet.getString("email"),
+                        id = id,
+                        email = email,
                         password = passEncriptada
                     )
                 }
@@ -56,6 +60,7 @@ class UsuarioDAO {
 
             while (resultSet.next()) {
                 val usuario = Usuario(
+                    id = resultSet.getInt("id"),
                     email = resultSet.getString("email"),
                     password = resultSet.getString("password")
                 )
@@ -63,5 +68,24 @@ class UsuarioDAO {
             }
         }
         return usuarios
+    }
+
+    fun obtenerUsuario(id: Int?): Usuario? {
+        val sql = "SELECT * FROM usuarios WHERE id = ?"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setInt(1, id!!)
+            val resultSet = statement.executeQuery()
+
+            while (resultSet.next()) {
+                return Usuario (
+                    id = resultSet.getInt("id"),
+                    email = resultSet.getString("email"),
+                    password = resultSet.getString("password")
+                )
+            }
+        }
+        return null
     }
 }

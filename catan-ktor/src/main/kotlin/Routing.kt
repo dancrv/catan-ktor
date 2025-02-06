@@ -1,5 +1,6 @@
 package com
 
+import com.rutas.partidaRouting
 import com.rutas.userRouting
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -16,5 +17,6 @@ fun Application.configureRouting() {
         // Static plugin. Try to access `/static/index.html`
         staticResources("/static", "static")
         userRouting()
+        partidaRouting()
     }
 }

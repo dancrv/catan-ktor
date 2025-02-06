@@ -47,8 +47,12 @@ const validateInput = (input) => {
     }
 };
 
-emailInput.addEventListener('input', () => validateInput(emailInput));
-passwordInput.addEventListener('input', () => validateInput(passwordInput));
+if (emailInput) {
+    emailInput.addEventListener('input', () => validateInput(emailInput));
+}
+if (passwordInput) {
+    passwordInput.addEventListener('input', () => validateInput(passwordInput));
+}
 
 if (registerBtn) {
     registerBtn.addEventListener('click', async(event) => {
@@ -145,6 +149,7 @@ if (loginBtn) {
             });
     
             const data = await response.json();
+            console.log(data)
     
             if (response.ok) {
                 showAlert('✅ ¡Login realizado con éxito!', 'success');
@@ -152,7 +157,11 @@ if (loginBtn) {
                 passwordInput.classList.remove('is-valid');
                 emailInput.value = "";
                 passwordInput.value = "";
-                localStorage.setItem("token", data.token);
+                localStorage.setItem("usuario", JSON.stringify({
+                    id: data.id, 
+                    email: data.email, 
+                    token: data.token
+                }));
             
                 setTimeout(() => {
                     window.location.href = 'game.html';
@@ -164,6 +173,14 @@ if (loginBtn) {
         } catch (error) {
             showAlert("❌ Error en la conexión con el servidor.", 'danger');
         }
+    });
+}
+
+const logoutBtn = document.getElementById('logoutBtn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('usuario');
+        window.location.href = '/src/login.html';
     });
 }
 

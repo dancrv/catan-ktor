@@ -3,4 +3,4 @@ package com.modelo
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Usuario(val id: Int, val email: String, val password: String)
+data class RespuestaLogin(val id: Int, val email: String, val token: String)

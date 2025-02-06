@@ -2,7 +2,8 @@ package com.rutas
 
 import com.DAO.UsuarioDAO
 import com.modelo.Respuesta
-import com.modelo.Usuario
+import com.modelo.RespuestaLogin
+import com.modelo.UsuarioLogin
 import com.utils.TokenManager
 import io.ktor.http.*
 import io.ktor.server.auth.*
@@ -16,7 +17,7 @@ fun Route.userRouting() {
 
     route("/registrar") {
         post {
-            val usuario = call.receive<Usuario>()
+            val usuario = call.receive<UsuarioLogin>()
 
             if (usuario.email.isBlank() || usuario.password.isBlank()) {
                 return@post call.respond(
@@ -40,7 +41,7 @@ fun Route.userRouting() {
 
     route("/login") {
         post {
-            val user = call.receive<Usuario>()
+            val user = call.receive<UsuarioLogin>()
             val usuario = usuarioDAO.login(user)
 
             if (usuario == null) {
@@ -49,19 +50,39 @@ fun Route.userRouting() {
                     Respuesta("Credenciales incorrectas.", HttpStatusCode.NotFound.value))
             }
             val token = tokenManager.generateJWTToken(usuario)
-            call.respond(mapOf("email" to usuario.email, "token" to token))
+            val respuesta = RespuestaLogin(usuario.id, usuario.email, token)
+
+            call.respond(HttpStatusCode.OK, respuesta)
         }
     }
 
     route("/listado") {
-        get {
-            val usuarios = usuarioDAO.obtenerUsuarios()
-            if (usuarios.isNotEmpty()) {
-                return@get call.respond(HttpStatusCode.OK, usuarios)
-            } else {
-                return@get call.respond(
-                    HttpStatusCode.OK,
-                    Respuesta("No hay usuarios.", HttpStatusCode.OK.value))
+        authenticate {
+            get {
+                val usuarios = usuarioDAO.obtenerUsuarios()
+                if (usuarios.isNotEmpty()) {
+                    return@get call.respond(HttpStatusCode.OK, usuarios)
+                } else {
+                    return@get call.respond(
+                        HttpStatusCode.OK,
+                        Respuesta("No hay usuarios.", HttpStatusCode.OK.value))
+                }
+            }
+
+            get("/{id}") {
+                val id = call.parameters["id"] ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    Respuesta("Falta el id en la url", HttpStatusCode.NotFound.value)
+                )
+                val idUsuario = id.toInt()
+                val usuario = usuarioDAO.obtenerUsuario(idUsuario)
+                if (usuario == null) {
+                    return@get call.respond(
+                        HttpStatusCode.NotFound,
+                        Respuesta("Usuario no encontrado", HttpStatusCode.NotFound.value)
+                    )
+                }
+                call.respond(HttpStatusCode.OK, usuario)
             }
         }
     }
