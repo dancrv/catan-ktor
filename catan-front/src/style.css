@@ -106,10 +106,16 @@ footer {
   padding: 10px;
 }
 
+.casilla:hover {
+  cursor: pointer;
+}
+
 .recurso {
-  background-color: rgba(255, 255, 255, 0.3);
-  color: #FFF;
-  font-size: 1.75rem;
-  min-width: 135px;
+  background-color: rgba(255, 255, 255, 0.4);
+  min-width: 120px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 

@@ -37,24 +37,29 @@ class PartidaDAO {
     }
 
     private fun inicializarTablero(idPartida: Int): List<Casilla> {
-        val recursos = Recurso.entries // Enum con los recursos
+        val recursos = Recurso.entries
         val tablero = mutableListOf<Casilla>()
         val sqlCasilla = "INSERT INTO casillas (id_partida, recurso, valor_dado, propietario) VALUES (?, ?, ?, ?)"
         val connection = Conexion.getConnection()
-        connection?.use {
-            val statement = it.prepareStatement(sqlCasilla, Statement.RETURN_GENERATED_KEYS)
+        connection?.use { conn ->
+            val statement = conn.prepareStatement(sqlCasilla, Statement.RETURN_GENERATED_KEYS)
             for (fila in 1..3) {
                 for (columna in 1..4) {
                     val recursoAleatorio = recursos.random()
-                    val valorDado = Random.nextInt(1, 7) // Valores de 1 a 6
+                    val valorDado = Random.nextInt(1, 7)
                     statement.setInt(1, idPartida)
                     statement.setString(2, recursoAleatorio.name)
                     statement.setInt(3, valorDado)
                     statement.setString(4, "LIBRE")
-                    statement.addBatch()
+                    statement.executeUpdate()
+                    val generatedKeys = statement.generatedKeys
+                    var idCasilla: Int? = null
+                    if (generatedKeys.next()) {
+                        idCasilla = generatedKeys.getInt(1)
+                    }
                     tablero.add(
                         Casilla(
-                            id = null,
+                            id = idCasilla,
                             idPartida = idPartida,
                             recurso = recursoAleatorio,
                             valorDado = valorDado,
@@ -63,12 +68,12 @@ class PartidaDAO {
                     )
                 }
             }
-            statement.executeBatch()
         }
         return tablero
     }
 
-    private fun obtenerTableroDePartida(idPartida: Int): List<Casilla> {
+
+    fun obtenerTableroDePartida(idPartida: Int): List<Casilla> {
         val casillas = mutableListOf<Casilla>()
         val sql = "SELECT * FROM casillas WHERE id_partida = ?"
         val connection = Conexion.getConnection()
@@ -142,6 +147,46 @@ class PartidaDAO {
             statement.setString(1, nuevoEstado)
             statement.setInt(2, idPartida)
 
+            return statement.executeUpdate() > 0
+        }
+        return false
+    }
+
+    fun seleccionarCasilla(idCasilla: Int, nuevoPropietario: String): Boolean {
+        val sql = "UPDATE casillas SET propietario = ? WHERE id = ? AND propietario = 'LIBRE'"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setString(1, nuevoPropietario)
+            statement.setInt(2, idCasilla)
+            return statement.executeUpdate() > 0
+        }
+        return false
+    }
+
+    fun seleccionarCasillaParaServidor(idPartida: Int): Boolean {
+        val casillasLibres = obtenerTableroDePartida(idPartida).filter { it.propietario == "LIBRE" }
+        if (casillasLibres.isEmpty()) {
+            return false
+        }
+
+        val pesos = mapOf(
+            "MADERA" to 1.0,
+            "TRIGO" to 1.5,
+            "CARBON" to 1.2
+        )
+
+        val casillaSeleccionada = casillasLibres.maxByOrNull { casilla ->
+            val peso = pesos[casilla.recurso.name] ?: 1.0
+            casilla.valorDado * peso
+        } ?: return false
+
+        val sql = "UPDATE casillas SET propietario = ? WHERE id = ? AND propietario = 'LIBRE'"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setString(1, "SERVIDOR")
+            statement.setInt(2, casillaSeleccionada.id!!)
             return statement.executeUpdate() > 0
         }
         return false

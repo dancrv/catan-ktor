@@ -24,7 +24,6 @@ const crearPartida = async () => {
             body: JSON.stringify({ id_jugador: usuario.id })
         });
         
-
         const data = await response.json();
         if (response.ok) {
             showAlert("✅ Partida creada con éxito.", 'success');
@@ -46,40 +45,38 @@ const pintarTablero = (tablero) => {
     }
 
     const recursos = {
-        "MADERA": { imagen: "/img/forest.png", emoji: "🌲" },
-        "TRIGO": { imagen: "/img/field.png", emoji: "🌾" },
-        "CARBON": { imagen: "/img/mountain.png", emoji: "⛏️" }
+        "MADERA": { imagen: "/img/forest.png", emoji: "🌲", nombre: "MADERA" },
+        "TRIGO": { imagen: "/img/field.png", emoji: "🌾", nombre: "TRIGO" },
+        "CARBON": { imagen: "/img/mountain.png", emoji: "⛏️", nombre: "CARBÓN" }
     };
 
-    let html = `
-        <div class="tablero-grid">
-    `;
+    let html = `<div class="tablero-grid">`;
 
     tablero.forEach(casilla => {
-        const recurso = recursos[casilla.recurso] || { imagen: "img/default.png", emoji: "❓" };
+        const recurso = recursos[casilla.recurso] || { imagen: "/img/default.png", emoji: "❓", nombre: "DESCONOCIDO" };
 
         let borde = "none";
-        if (casilla.propietario === "JUGADOR") borde = "2px solid green";
-        if (casilla.propietario === "SERVIDOR") borde = "2px solid #8f1d27";
+        if (casilla.propietario === "JUGADOR") borde = "3px solid #fff";
+        if (casilla.propietario === "SERVIDOR") borde = "3px solid #8f1d27";
 
-       html += `
-            <div class="casilla" style="
+        html += `
+            <div class="casilla shadow" data-id="${casilla.id}" data-propietario="${casilla.propietario}" style="
                 background-image: url('${recurso.imagen}');
                 background-size: cover;
                 border: ${borde};
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 2rem;
+                font-size: 1.5rem;
                 font-weight: bold;
                 width: 150px;
                 height: 150px;
                 margin: 5px;
                 color: white;
-                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+                text-shadow: 2px 2px 4px rgb(0, 0, 0);
             ">
-                <div class="recurso rounded-5">
-                    <p class="m-0">${casilla.recurso}</p>
+                <div class="recurso rounded">
+                    <p class="m-0">${recurso.nombre}</p>
                     <p class="m-0">${casilla.valorDado}</p>
                     <p class="m-0">${recurso.emoji}</p>
                 </div>
@@ -89,8 +86,58 @@ const pintarTablero = (tablero) => {
 
     html += '</div>';
     tableroContainer.innerHTML = html;
+    
+    attachCasillaClickListeners();
 };
 
+const attachCasillaClickListeners = () => {
+    const casillaElements = document.querySelectorAll(".casilla");
+    casillaElements.forEach(casillaEl => {
+        casillaEl.addEventListener("click", () => {
+            const propietario = casillaEl.getAttribute("data-propietario");
+            if (propietario !== "LIBRE") {
+                showAlert("❕Esta casilla ya está ocupada.", "warning");
+                return;
+            }
+
+            const idCasilla = casillaEl.getAttribute("data-id");
+            if (!idCasilla) return;
+ 
+            seleccionarCasilla(parseInt(idCasilla));
+        });
+    });
+};
+
+const seleccionarCasilla = async (idCasilla) => {
+    const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
+    if (!partidaGuardada || !partidaGuardada.id) {
+        showAlert("⚠️ No hay partida activa.", "danger");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/partidas/seleccionarCasilla`, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${usuario.token}` 
+            },
+            body: JSON.stringify({
+                id_partida: partidaGuardada.id,
+                id_casilla: idCasilla
+            })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem("partida", JSON.stringify(data));
+            pintarTablero(data.tablero);
+        } else {
+            showAlert(`❌ Error: ${data.msg}`, "danger");
+        }
+    } catch (error) {
+        showAlert("❌ Error en la conexión con el servidor.", "danger");
+    }
+};
 
 if (nuevaPartidaBtn) {
     nuevaPartidaBtn.addEventListener("click", crearPartida);
@@ -98,12 +145,11 @@ if (nuevaPartidaBtn) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
-
     if (partidaGuardada) {
         showAlert("⏳ Continuando partida en progreso...", 'info');
         pintarTablero(partidaGuardada.tablero);
         
-        if (partidaGuardada && partidaGuardada.estado === "EN_JUEGO") {
+        if (partidaGuardada && partidaGuardada.estado === "EN_CURSO") {
             nuevaPartidaBtn.disabled = true;
         }
     }
@@ -144,5 +190,4 @@ const abandonarPartida = async () => {
 
 if (abandonarPartidaBtn) {
     abandonarPartidaBtn.addEventListener("click", abandonarPartida);
-
 }

@@ -67,6 +67,71 @@ fun Route.partidaRouting() {
                 call.respond(HttpStatusCode.OK, partida)
             }
 
+            post("/seleccionarCasilla") {
+
+                val params = call.receive<Map<String, Int>>()
+                val idPartida = params["id_partida"] ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    Respuesta("Falta el id de la partida", HttpStatusCode.BadRequest.value)
+                )
+                val idCasilla = params["id_casilla"] ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    Respuesta("Falta el id de la casilla", HttpStatusCode.BadRequest.value)
+                )
+
+                val partida = partidaDAO.obtenerPartida(idPartida)
+                if (partida == null) {
+                    return@post call.respond(
+                        HttpStatusCode.NotFound,
+                        Respuesta("Partida no encontrada", HttpStatusCode.NotFound.value)
+                    )
+                }
+
+                if (partida.turno != "JUGADOR") {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        Respuesta("No es el turno del jugador", HttpStatusCode.BadRequest.value)
+                    )
+                }
+
+                if (partida.estado != "EN_CURSO") {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        Respuesta("La partida ya no está activa", HttpStatusCode.BadRequest.value)
+                    )
+                }
+
+                val exito = partidaDAO.seleccionarCasilla(idCasilla, "JUGADOR")
+                if (!exito) {
+                    return@post call.respond(
+                        HttpStatusCode.BadRequest,
+                        Respuesta("La casilla no se pudo actualizar o ya está ocupada", HttpStatusCode.BadRequest.value)
+                    )
+                }
+
+                val tablero = partidaDAO.obtenerTableroDePartida(idPartida)
+                if (tablero.any { it.propietario == "LIBRE" }) {
+                    val exitoServidor = partidaDAO.seleccionarCasillaParaServidor(idPartida)
+                    if (!exitoServidor) {
+                        return@post call.respond(
+                            HttpStatusCode.InternalServerError,
+                            Respuesta("No se pudo seleccionar la casilla para el servidor", HttpStatusCode.InternalServerError.value)
+                        )
+                    }
+                }
+
+                val partidaActualizada = partidaDAO.obtenerPartida(idPartida)
+                if (partidaActualizada == null) {
+                    return@post call.respond(
+                        HttpStatusCode.InternalServerError,
+                        Respuesta("Error al obtener la partida actualizada", HttpStatusCode.InternalServerError.value)
+                    )
+                }
+
+                call.respond(HttpStatusCode.OK, partidaActualizada)
+            }
+
+
             post("/abandonar") {
                 val params = call.receive<Map<String, Int>>()
                 val id = params["id_partida"] ?: return@post call.respond(
