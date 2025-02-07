@@ -13,14 +13,19 @@
     </header>
     <main class="main container shadow d-flex flex-column p-3">
         <div class="bg-light w-100 h-25 p-3 rounded shadow d-flex flex-column justify-content-center">
-            <div class="botones">
+            <div class="botones d-flex gap-3 justify-content-center">
                 <button id="newGameBtn" class="btn btn-outline-danger">Nueva partida</button>
-                <button id="abandonarPartidaBtn" class="btn btn-outline-secondary mx-2">Abandonar partida</button>
+                <button id="tirarDadoBtn" class="btn btn-outline-success">Tirar dado</button>
+                <button id="abandonarPartidaBtn" class="btn btn-outline-secondary">Abandonar partida</button>
             </div>
             <div id="alertContainer" class="mt-3"></div>
         </div>
-        <div class="tablero d-flex justify-content-center">
+        <div class="tablero d-flex flex-column justify-content-center align-items-center">
             <div id="tableroContainer" class="mt-3"></div>
+            <div id="almacenes" class="almacenes d-flex justify-content-around bg-light rounded shadow">
+                <div id="almacenJugador" class="text-center"></div>
+                <div id="almacenServidor" class="text-center"></div>
+            </div>
         </div>
     </main>
     <footer class="footer container-fluid text-light text-center p-3 shadow">

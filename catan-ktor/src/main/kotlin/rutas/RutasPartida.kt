@@ -87,13 +87,6 @@ fun Route.partidaRouting() {
                     )
                 }
 
-                if (partida.turno != "JUGADOR") {
-                    return@post call.respond(
-                        HttpStatusCode.BadRequest,
-                        Respuesta("No es el turno del jugador", HttpStatusCode.BadRequest.value)
-                    )
-                }
-
                 if (partida.estado != "EN_CURSO") {
                     return@post call.respond(
                         HttpStatusCode.BadRequest,
@@ -131,6 +124,21 @@ fun Route.partidaRouting() {
                 call.respond(HttpStatusCode.OK, partidaActualizada)
             }
 
+            post("/tirarDado") {
+                val params = call.receive<Map<String, Int>>()
+                val idPartida = params["id_partida"] ?: return@post call.respond(
+                    HttpStatusCode.BadRequest,
+                    Respuesta("Falta el id de la partida", HttpStatusCode.BadRequest.value)
+                )
+                val resultado = partidaDAO.tirarDado(idPartida)
+                if (resultado == null) {
+                    return@post call.respond(
+                        HttpStatusCode.InternalServerError,
+                        Respuesta("Error al tirar el dado o la partida no está activa", HttpStatusCode.InternalServerError.value)
+                    )
+                }
+                call.respond(HttpStatusCode.OK, resultado)
+            }
 
             post("/abandonar") {
                 val params = call.receive<Map<String, Int>>()

@@ -6,6 +6,7 @@ const apiUrl = 'http://127.0.0.1:8080';
 const usuario = JSON.parse(localStorage.getItem('usuario'));
 const nuevaPartidaBtn = document.getElementById('newGameBtn');
 const tableroContainer = document.getElementById('tableroContainer');
+const almacenes = document.getElementById('almacenes');
 
 const crearPartida = async () => {
     if (!usuario || !usuario.id) {
@@ -28,8 +29,11 @@ const crearPartida = async () => {
         if (response.ok) {
             showAlert("✅ Partida creada con éxito.", 'success');
             localStorage.setItem("partida", JSON.stringify(data));
-            nuevaPartidaBtn.disabled = true;
+            nuevaPartidaBtn.style.display = "none";
+            abandonarPartidaBtn.style.display = "block";
             pintarTablero(data.tablero); 
+            almacenes.style.display = "block";
+            almacenes.classList.add('p-3','w-100','h-25')
         } else {
             showAlert(`❌ Error al crear partida: ${data.msg}`, 'danger');
         }
@@ -57,7 +61,7 @@ const pintarTablero = (tablero) => {
 
         let borde = "none";
         if (casilla.propietario === "JUGADOR") borde = "3px solid #fff";
-        if (casilla.propietario === "SERVIDOR") borde = "3px solid #8f1d27";
+        if (casilla.propietario === "SERVIDOR") borde = "3px solid #45403d";
 
         html += `
             <div class="casilla shadow" data-id="${casilla.id}" data-propietario="${casilla.propietario}" style="
@@ -88,6 +92,7 @@ const pintarTablero = (tablero) => {
     tableroContainer.innerHTML = html;
     
     attachCasillaClickListeners();
+    actualizarAlmacenes(almacenJugador, almacenServidor);
 };
 
 const attachCasillaClickListeners = () => {
@@ -145,12 +150,20 @@ if (nuevaPartidaBtn) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
+    abandonarPartidaBtn.style.display = 'none';
+
     if (partidaGuardada) {
         showAlert("⏳ Continuando partida en progreso...", 'info');
         pintarTablero(partidaGuardada.tablero);
         
         if (partidaGuardada && partidaGuardada.estado === "EN_CURSO") {
-            nuevaPartidaBtn.disabled = true;
+            nuevaPartidaBtn.style.display = "none";
+            abandonarPartidaBtn.style.display = 'block';
+            almacenes.style.display = "block";
+            almacenes.classList.add('p-3','w-100','h-25')
+        } else {
+            almacenes.innerHTML = "";
+            almacenes.classList.remove('p-3','w-100','h-25');
         }
     }
 });
@@ -179,7 +192,10 @@ const abandonarPartida = async () => {
             showAlert("❌ Has abandonado la partida.", "warning");
             localStorage.removeItem("partida"); 
             tableroContainer.innerHTML = ""; 
-            nuevaPartidaBtn.disabled = false;
+            nuevaPartidaBtn.style.display = "block";
+            abandonarPartidaBtn.style.display = "none";
+            almacenes.innerHTML = "";
+            almacenes.classList.remove('p-3','w-100','h-25');
         } else {
             showAlert("⚠️ No se pudo abandonar la partida.", "danger");
         }
@@ -191,3 +207,69 @@ const abandonarPartida = async () => {
 if (abandonarPartidaBtn) {
     abandonarPartidaBtn.addEventListener("click", abandonarPartida);
 }
+
+const tirarDado = async () => {
+    const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
+    if (!partidaGuardada || !partidaGuardada.id) {
+        showAlert("⚠️ No hay partida activa.", "danger");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${apiUrl}/partidas/tirarDado`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${usuario.token}`
+            },
+            body: JSON.stringify({ id_partida: partidaGuardada.id })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            showAlert(`🎲 Dado: ${data.dado}`, "info");
+            localStorage.setItem("partida", JSON.stringify(data.partida));
+            actualizarAlmacenes(data.almacenJugador, data.almacenServidor);
+
+            if (data.ganador) {
+                showAlert(`¡Ha ganado ${data.ganador}!`, "success");
+                localStorage.removeItem("partida"); 
+                tableroContainer.innerHTML = ""; 
+                nuevaPartidaBtn.style.display = "block";
+                abandonarPartidaBtn.style.display = "none";
+                almacenes.innerHTML = "";
+                almacenes.classList.remove('p-3','w-100','h-25');
+            }
+        } else {
+            showAlert(`❌ Error: ${data.msg}`, "danger");
+        }
+    } catch (error) {
+        showAlert("❌ Error en la conexión con el servidor.", "danger");
+    }
+};
+
+const actualizarAlmacenes = (almacenJugador, almacenServidor) => {
+    const almacenJugadorDiv = document.getElementById("almacenJugador");
+    const almacenServidorDiv = document.getElementById("almacenServidor");
+    if (almacenJugadorDiv) {
+        almacenJugadorDiv.innerHTML = `
+            <h3>🛖 Almacén Jugador</h3>
+            <p>🌲Madera: ${almacenJugador.madera ?? 0}</p>
+            <p>🌾Trigo: ${almacenJugador.trigo ?? 0}</p>
+            <p>⛏️Carbón: ${almacenJugador.carbon ?? 0}</p>
+        `;
+    }
+    if (almacenServidorDiv) {
+        almacenServidorDiv.innerHTML = `
+            <h3>🛖 Almacén Servidor</h3>
+            <p>🌲Madera: ${almacenServidor.madera ?? 0}</p>
+            <p>🌾Trigo: ${almacenServidor.trigo ?? 0}</p>
+            <p>⛏️Carbón: ${almacenServidor.carbon ?? 0}</p>
+        `;
+    }
+};
+
+const tirarDadoBtn = document.getElementById("tirarDadoBtn");
+if (tirarDadoBtn) {
+    tirarDadoBtn.addEventListener("click", tirarDado);
+}
+
