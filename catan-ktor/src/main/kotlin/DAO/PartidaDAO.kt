@@ -24,7 +24,13 @@ class PartidaDAO {
             if (generatedKeys.next()) {
                 val idPartida = generatedKeys.getInt(1)
                 val tablero = inicializarTablero(idPartida)
-                return Partida(id = idPartida, idJugador = idJugador, estado = "EN_CURSO", tablero = tablero, turno = "JUGADOR")
+                return Partida(
+                    id = idPartida,
+                    idJugador = idJugador,
+                    estado = "EN_CURSO",
+                    tablero = tablero,
+                    turno = "JUGADOR"
+                )
             }
         }
         return null
@@ -46,7 +52,15 @@ class PartidaDAO {
                     statement.setInt(3, valorDado)
                     statement.setString(4, "LIBRE")
                     statement.addBatch()
-                    tablero.add(Casilla(id = null, idPartida = idPartida, recurso = recursoAleatorio, valorDado = valorDado, propietario = "LIBRE"))
+                    tablero.add(
+                        Casilla(
+                            id = null,
+                            idPartida = idPartida,
+                            recurso = recursoAleatorio,
+                            valorDado = valorDado,
+                            propietario = "LIBRE"
+                        )
+                    )
                 }
             }
             statement.executeBatch()
@@ -118,5 +132,18 @@ class PartidaDAO {
             }
         }
         return null
+    }
+
+    fun modificarEstadoPartida(idPartida: Int, nuevoEstado: String): Boolean {
+        val sql = "UPDATE partidas SET estado = ? WHERE id = ?"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setString(1, nuevoEstado)
+            statement.setInt(2, idPartida)
+
+            return statement.executeUpdate() > 0
+        }
+        return false
     }
 }

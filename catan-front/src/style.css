@@ -79,3 +79,37 @@ footer {
 .no-register a {
   color: #8f1d27;
 }
+
+.tablero-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  gap: 10px;
+  justify-content: center; 
+  align-items: center;
+  padding: 20px;
+}
+
+
+.casilla {
+  width: 150px;
+  height: 150px;
+  background-color: #f4a261;
+  border: 2px solid #8f1d27;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;
+  text-align: center;
+  align-self: center; 
+  font-weight: bold;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.recurso {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #FFF;
+  font-size: 1.75rem;
+  min-width: 135px;
+}
+

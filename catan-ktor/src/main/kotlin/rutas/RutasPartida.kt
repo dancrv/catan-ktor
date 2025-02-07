@@ -66,6 +66,35 @@ fun Route.partidaRouting() {
                 }
                 call.respond(HttpStatusCode.OK, partida)
             }
+
+            post("/abandonar") {
+                val params = call.receive<Map<String, Int>>()
+                val id = params["id_partida"] ?: return@post call.respond(
+                    HttpStatusCode.NotFound,
+                    Respuesta("Falta el id de la partida", HttpStatusCode.NotFound.value)
+                )
+                val idPartida = id.toInt()
+                val partida = partidaDAO.obtenerPartida(idPartida)
+                if (partida == null) {
+                    return@post call.respond(
+                        HttpStatusCode.NotFound,
+                        Respuesta("Partida no encontrada", HttpStatusCode.NotFound.value)
+                    )
+                }
+                val exito = partidaDAO.modificarEstadoPartida(idPartida, "ABANDONADA")
+
+                if (exito) {
+                    call.respond(
+                        HttpStatusCode.OK,
+                        Respuesta("Partida abandonada correctamente", HttpStatusCode.OK.value)
+                    )
+                } else {
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        Respuesta("No se pudo actualizar el estado de la partida", HttpStatusCode.InternalServerError.value)
+                    )
+                }
+            }
         }
     }
 }
