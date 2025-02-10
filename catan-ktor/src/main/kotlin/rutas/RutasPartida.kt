@@ -67,6 +67,24 @@ fun Route.partidaRouting() {
                 call.respond(HttpStatusCode.OK, partida)
             }
 
+            get("/jugador/{id}") {
+                val id = call.parameters["id"] ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    Respuesta("Falta el id en la url", HttpStatusCode.NotFound.value)
+                )
+                val idJugador = id.toInt()
+                val partidas = partidaDAO.obtenerPartidasDeJugador(idJugador)
+
+                if (partidas.isNotEmpty()) {
+                    return@get call.respond(HttpStatusCode.OK, partidas)
+                } else {
+                    return@get call.respond(
+                        HttpStatusCode.OK,
+                        Respuesta("No hay partidas para ese jugador", HttpStatusCode.OK.value)
+                    )
+                }
+            }
+
             post("/seleccionarCasilla") {
 
                 val params = call.receive<Map<String, Int>>()
@@ -155,8 +173,9 @@ fun Route.partidaRouting() {
                     )
                 }
                 val exito = partidaDAO.modificarEstadoPartida(idPartida, "ABANDONADA")
+                val ganador = partidaDAO.modificarGanadorPartida(idPartida, "SERVIDOR")
 
-                if (exito) {
+                if (exito && ganador) {
                     call.respond(
                         HttpStatusCode.OK,
                         Respuesta("Partida abandonada correctamente", HttpStatusCode.OK.value)

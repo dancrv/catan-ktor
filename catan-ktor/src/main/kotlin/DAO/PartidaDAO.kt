@@ -25,7 +25,8 @@ class PartidaDAO {
                     id = idPartida,
                     idJugador = idJugador,
                     estado = "EN_CURSO",
-                    tablero = tablero
+                    tablero = tablero,
+                    tableroLleno = false
                 )
                 AlmacenServidor.inicializarAlmacen(nuevaPartida.id!!)
                 crearAlmacen(idJugador)
@@ -109,8 +110,33 @@ class PartidaDAO {
                 val idJugador = resultSet.getInt("id_jugador")
                 val estado = resultSet.getString("estado")
                 val tablero = obtenerTableroDePartida(idPartida)
+                val tableroLleno = tablero.none { it.propietario == "LIBRE" }
+                val ganador = resultSet.getString("ganador")
 
-                partidas.add(Partida(idPartida, idJugador, estado, tablero))
+                partidas.add(Partida(idPartida, idJugador, estado, tablero, tableroLleno, ganador))
+            }
+        }
+        return partidas
+    }
+
+    fun obtenerPartidasDeJugador(idJugador: Int): List<Partida> {
+        val partidas = mutableListOf<Partida>()
+        val sql = "SELECT * FROM partidas WHERE id_jugador = ?"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setInt(1, idJugador)
+            val resultSet = statement.executeQuery()
+
+            while (resultSet.next()) {
+                val idPartida = resultSet.getInt("id")
+                val idJugador = resultSet.getInt("id_jugador")
+                val estado = resultSet.getString("estado")
+                val tablero = obtenerTableroDePartida(idPartida)
+                val tableroLleno = tablero.none { it.propietario == "LIBRE" }
+                val ganador = resultSet.getString("ganador")
+
+                partidas.add(Partida(idPartida, idJugador, estado, tablero, tableroLleno, ganador))
             }
         }
         return partidas
@@ -129,8 +155,10 @@ class PartidaDAO {
                 val idJugador = resultSet.getInt("id_jugador")
                 val estado = resultSet.getString("estado")
                 val tablero = obtenerTableroDePartida(idPartida)
+                val tableroLleno = tablero.none { it.propietario == "LIBRE" }
+                val ganador = resultSet.getString("ganador")
 
-                return Partida(idPartida, idJugador, estado, tablero)
+                return Partida(idPartida, idJugador, estado, tablero, tableroLleno, ganador)
             }
         }
         return null
@@ -142,6 +170,19 @@ class PartidaDAO {
         connection?.use {
             val statement = it.prepareStatement(sql)
             statement.setString(1, nuevoEstado)
+            statement.setInt(2, idPartida)
+
+            return statement.executeUpdate() > 0
+        }
+        return false
+    }
+
+    fun modificarGanadorPartida(idPartida: Int, ganador: String): Boolean {
+        val sql = "UPDATE partidas SET ganador = ? WHERE id = ?"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setString(1, ganador)
             statement.setInt(2, idPartida)
 
             return statement.executeUpdate() > 0
@@ -301,6 +342,7 @@ class PartidaDAO {
 
                 if (madera >= 20 && trigo >= 20 && carbon >= 20) {
                     modificarEstadoPartida(idPartida, "FINALIZADA")
+                    modificarGanadorPartida(idPartida, "JUGADOR")
                     return true
                 }
             }
@@ -313,6 +355,7 @@ class PartidaDAO {
 
         if (almacen.madera >= 20 && almacen.trigo >= 20 && almacen.carbon >= 20) {
             modificarEstadoPartida(idPartida, "FINALIZADA")
+            modificarGanadorPartida(idPartida, "SERVIDOR")
             return true
         }
         return false

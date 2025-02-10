@@ -7,6 +7,6 @@ data class RespuestaTirada(
     val dado: Int,
     val partida: Partida,
     val almacenJugador: AlmacenRecursos?,
-    val almacenServidor: AlmacenRecursosServidor, // O el tipo que uses en memoria para el servidor
+    val almacenServidor: AlmacenRecursosServidor,
     val ganador: String? = null
 )

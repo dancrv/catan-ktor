@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catan | Cómo jugar</title>
+    <link rel="shortcut icon" href="/img/favicon.png" type="image/x-icon">
+</head>
+<body>
+    <header class="header container-fluid py-3 px-5 shadow d-flex justify-content-between align-items-center">
+        <h1 class="px-4 m-0">Catan</h1>
+        <div class="botones-menu">
+            <a href="game.html">
+                <button id="jugar" class="btn btn-outline-warning mx-3"><i class="bi bi-play-btn"></i> Jugar</button>
+            </a>
+            <a href="historial.html">
+                <button id="historial" class="btn btn-outline-warning mx-3"><i class="bi bi-card-list"></i> Historial de partidas</button>
+            </a>
+            <button id="logoutBtn" class="btn btn-outline-warning mx-3"><i class="bi bi-box-arrow-in-left"></i> Cerrar sesión</button>
+        </div>
+    </header>
+    <main class="main container shadow d-flex flex-column p-5">
+        <div class="bg-light w-100 h-25 p-3 rounded shadow d-flex flex-column justify-content-center">
+            <h1>📜 Instrucciones de Juego – Conquistadores de Catán 🏰</h1>
+            <hr>
+            <h2>🎯 Objetivo del Juego</h2>
+            <p>Ser el primer jugador en alcanzar 20 unidades de madera, trigo y carbón en su almacén.</p>
+            <h3>👥 Jugadores</h3>
+            <ul>
+                <li>Jugador Humano (tú).</li>
+                <li>Servidor (el ordenador).</li>
+            </ul>
+            <h3>🌍 Tablero de Juego</h3>
+            <ul>
+                <li>El tablero es una cuadrícula de 3x4 casillas (12 en total).</li>
+                <li>Cada casilla tiene un recurso (🌲 madera, 🌾 trigo, ⛏️ carbón).</li>
+                <li>Cada casilla tiene un número del 1 al 6, asignado al azar.</li>
+                <li>Cada casilla puede pertenecer al jugador humano o al servidor.</li>
+            </ul>
+            <hr>
+            <h2>🔥 Fases del Juego</h2>
+            <h3>1️⃣ Fase de Asignación de Casillas</h3>
+            <ol>
+                <li>Cada jugador elige sus casillas por turnos:
+                    <ul>
+                        <li>Primero, el jugador humano elige una casilla vacía.</li>
+                        <li>Luego, el servidor selecciona una casilla vacía con cierta inteligencia.</li>
+                        <li>Se repite el proceso hasta que todas las casillas estén ocupadas.</li>
+                        <li>Al terminar esta fase, cada casilla tendrá un propietario.</li>
+                    </ul>
+                </li>
+            </ol>
+            <h3>2️⃣ Fase de Juego</h3>
+            <ol>
+                <li>Los jugadores lanzan el dado 🎲.</li>
+                <li>El número del dado se compara con las casillas del tablero:
+                    <ul>
+                        <li>Si el número del dado coincide con el número de una casilla, el propietario de esa casilla <strong>gana el recurso correspondiente</strong>.</li>
+                        <li>Ejemplo: Si el dado saca 4, todas las casillas con 4 generan recursos para sus dueños.</li>
+                    </ul>
+                </li>
+                <li>Se repite el proceso hasta que un jugador alcance 20 unidades en todos los recursos.</li>
+            </ol>
+            <hr>
+            <h3>🚪 Opciones Adicionales</h3>
+            <ul style="list-style-type: none;">
+                <li>✅ Guardar y Continuar: Puedes salir del juego y retomarlo más tarde.</li>
+                <li>✅ Abandonar Partida: Puedes rendirte en cualquier momento, dando la victoria al servidor.</li>
+                <li>✅ Historial de Partidas: Puedes consultar tus partidas anteriores.</li>
+            </ul>  
+            <hr>
+            <h3>🏆 Condiciones de Victoria</h3>
+            <ul>
+                <li>El primer jugador en alcanzar 20 unidades de madera, trigo y carbón gana la partida.</li>
+                <li>Si abandonas la partida, el servidor gana automáticamente.</li>
+            </ul>
+        </div>
+    </main>
+    <footer class="footer container-fluid text-light text-center p-3 shadow">
+        <p class="m-0">© 2025 · Catan Ktor · Daniel Cruz Villegas</p>
+    </footer>
+    <script type="module" src="/src/game.js"></script>
+</body>
+</html>

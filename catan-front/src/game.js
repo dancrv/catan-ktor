@@ -28,10 +28,14 @@ const crearPartida = async () => {
         const data = await response.json();
         if (response.ok) {
             showAlert("✅ Partida creada con éxito.", 'success');
+
             localStorage.setItem("partida", JSON.stringify(data));
+            
             nuevaPartidaBtn.style.display = "none";
             abandonarPartidaBtn.style.display = "block";
-            pintarTablero(data.tablero); 
+
+            pintarTablero(data.tablero, data.tableroLleno); 
+
             almacenes.style.display = "block";
             almacenes.classList.add('p-3','w-100','h-25')
         } else {
@@ -42,7 +46,7 @@ const crearPartida = async () => {
     }
 };
 
-const pintarTablero = (tablero) => {
+const pintarTablero = (tablero, tableroLleno) => {
     if (!tablero || tablero.length === 0) {
         tableroContainer.innerHTML = "<p class='text-center text-danger'>⚠️ No hay tablero disponible.</p>";
         return;
@@ -90,6 +94,22 @@ const pintarTablero = (tablero) => {
 
     html += '</div>';
     tableroContainer.innerHTML = html;
+
+    if (tableroLleno) {
+        dados.style.display = "block";
+        dados.innerHTML = 
+        `
+        <button id="tirarDadoBtn" class="btn btn-outline-success"><i class="bi bi-dice-5"></i> Tirar dado</button>
+        <div id="dadoContainer" class="border border-dark rounded shadow p-3 d-flex justify-content-center align-items-center" style="min-height: 110px;">
+            <h1 id="puntuacionDado" class="text-center m-0">5</h1>
+        </div>
+        `
+        dados.classList.add('bg-light', 'p-5', 'rounded', 'shadow', 'd-flex', 'flex-column', 'justify-content-center', 'gap-3');
+    } else {
+        dados.style.display = "none";
+        dados.innerHTML = '';
+        dados.classList.remove('bg-light', 'p-5', 'rounded', 'shadow', 'd-flex', 'flex-column', 'justify-content-center', 'gap-3');
+    }
     
     attachCasillaClickListeners();
     actualizarAlmacenes(almacenJugador, almacenServidor);
@@ -135,7 +155,7 @@ const seleccionarCasilla = async (idCasilla) => {
         const data = await response.json();
         if (response.ok) {
             localStorage.setItem("partida", JSON.stringify(data));
-            pintarTablero(data.tablero);
+            pintarTablero(data.tablero, data.tableroLleno);
         } else {
             showAlert(`❌ Error: ${data.msg}`, "danger");
         }
@@ -150,11 +170,14 @@ if (nuevaPartidaBtn) {
 
 document.addEventListener("DOMContentLoaded", () => {
     const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
-    abandonarPartidaBtn.style.display = 'none';
+    if (abandonarPartidaBtn) {
+        abandonarPartidaBtn.style.display = "none";
+        dados.style.display = "none";
+    }
 
     if (partidaGuardada) {
         showAlert("⏳ Continuando partida en progreso...", 'info');
-        pintarTablero(partidaGuardada.tablero);
+        pintarTablero(partidaGuardada.tablero, partidaGuardada.tableroLleno);
         
         if (partidaGuardada && partidaGuardada.estado === "EN_CURSO") {
             nuevaPartidaBtn.style.display = "none";
@@ -191,9 +214,17 @@ const abandonarPartida = async () => {
         if (response.ok) {
             showAlert("❌ Has abandonado la partida.", "warning");
             localStorage.removeItem("partida"); 
+
             tableroContainer.innerHTML = ""; 
+
             nuevaPartidaBtn.style.display = "block";
+
             abandonarPartidaBtn.style.display = "none";
+
+            dados.style.display = "none";
+            dados.innerHTML = '';
+            dados.classList.remove('bg-light', 'p-5', 'rounded', 'shadow', 'd-flex', 'flex-column', 'justify-content-center', 'gap-3');
+
             almacenes.innerHTML = "";
             almacenes.classList.remove('p-3','w-100','h-25');
         } else {
@@ -226,16 +257,24 @@ const tirarDado = async () => {
         });
         const data = await response.json();
         if (response.ok) {
-            showAlert(`🎲 Dado: ${data.dado}`, "info");
+            const puntuacionDado = document.getElementById('puntuacionDado');
+            puntuacionDado.innerHTML = data.dado;
+
             localStorage.setItem("partida", JSON.stringify(data.partida));
             actualizarAlmacenes(data.almacenJugador, data.almacenServidor);
 
             if (data.ganador) {
                 showAlert(`¡Ha ganado ${data.ganador}!`, "success");
                 localStorage.removeItem("partida"); 
+
                 tableroContainer.innerHTML = ""; 
                 nuevaPartidaBtn.style.display = "block";
                 abandonarPartidaBtn.style.display = "none";
+
+                dados.style.display = "none";
+                dados.innerHTML = '';
+                dados.classList.remove('bg-light', 'p-5', 'rounded', 'shadow', 'd-flex', 'flex-column', 'justify-content-center', 'gap-3');
+                
                 almacenes.innerHTML = "";
                 almacenes.classList.remove('p-3','w-100','h-25');
             }
@@ -268,8 +307,8 @@ const actualizarAlmacenes = (almacenJugador, almacenServidor) => {
     }
 };
 
-const tirarDadoBtn = document.getElementById("tirarDadoBtn");
-if (tirarDadoBtn) {
-    tirarDadoBtn.addEventListener("click", tirarDado);
+const dados = document.getElementById("dados");
+if (dados) {
+    dados.addEventListener("click", tirarDado);
 }
 
