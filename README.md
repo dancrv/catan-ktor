@@ -69,3 +69,9 @@ Gana el primer jugador que alcance **20 unidades de madera, trigo y carbón** en
 3.  Si el número del dado coincide con el de una casilla, **su dueño recibe el recurso** de esa casilla.
 4.  Gana el primer jugador en **alcanzar 20 unidades de cada recurso**.
 5.  El jugador puede **abandonar en cualquier momento** o **guardar la partida** y continuar después.
+
+---
+
+### 📝 Licencia
+
+Este proyecto está bajo la licencia **MIT**. Puedes consultar más detalles en el archivo `LICENSE`.
