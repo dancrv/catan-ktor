@@ -85,6 +85,22 @@ fun Route.partidaRouting() {
                 }
             }
 
+            get("/enCurso/{id}") {
+                val id = call.parameters["id"] ?: return@get call.respond(
+                    HttpStatusCode.NotFound,
+                    Respuesta("Falta el id en la url", HttpStatusCode.NotFound.value)
+                )
+                val idJugador = id.toInt()
+                val partida = partidaDAO.obtenerPartidaEnCurso(idJugador)
+                if (partida == null) {
+                    return@get call.respond(
+                        HttpStatusCode.NotFound,
+                        Respuesta("Partida no encontrada", HttpStatusCode.NotFound.value)
+                    )
+                }
+                call.respond(HttpStatusCode.OK, partida)
+            }
+
             post("/seleccionarCasilla") {
 
                 val params = call.receive<Map<String, Int>>()

@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
 import { showAlert } from './main';
 
-const apiUrl = 'http://127.0.0.1:8080';
+export const apiUrl = 'http://127.0.0.1:8080';
 const usuario = JSON.parse(localStorage.getItem('usuario'));
 const nuevaPartidaBtn = document.getElementById('newGameBtn');
 const tableroContainer = document.getElementById('tableroContainer');
@@ -168,12 +168,34 @@ if (nuevaPartidaBtn) {
     nuevaPartidaBtn.addEventListener("click", crearPartida);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
+document.addEventListener("DOMContentLoaded", async() => {  
+    try {
+        const response = await fetch(`${apiUrl}/partidas/enCurso/${usuario.id}`, {
+            method: "GET",
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${usuario.token}` 
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("partida", JSON.stringify(data));
+
+        } else {
+            console.error("Error")
+        }
+    } catch (error) {
+        console.error(error)
+    }
+    
     if (abandonarPartidaBtn) {
         abandonarPartidaBtn.style.display = "none";
         dados.style.display = "none";
     }
+
+    const partidaGuardada = JSON.parse(localStorage.getItem("partida"));
 
     if (partidaGuardada) {
         showAlert("⏳ Continuando partida en progreso...", 'info');
@@ -274,7 +296,7 @@ const tirarDado = async () => {
                 dados.style.display = "none";
                 dados.innerHTML = '';
                 dados.classList.remove('bg-light', 'p-5', 'rounded', 'shadow', 'd-flex', 'flex-column', 'justify-content-center', 'gap-3');
-                
+
                 almacenes.innerHTML = "";
                 almacenes.classList.remove('p-3','w-100','h-25');
             }

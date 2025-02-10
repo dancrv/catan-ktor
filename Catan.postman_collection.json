@@ -1,0 +1,437 @@
+{
+	"info": {
+		"_postman_id": "fe60722e-622f-476a-a053-302236f41c65",
+		"name": "Catan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36268967"
+	},
+	"item": [
+		{
+			"name": "Usuarios",
+			"item": [
+				{
+					"name": "Ver usuarios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/listado",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"listado"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver usuario {id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/listado/6",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"listado",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar usuario",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"dan@catan.com\",\r\n    \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/registrar",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"registrar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"dan@catan.com\",\r\n    \"password\": \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Partidas",
+			"item": [
+				{
+					"name": "Ver partidas",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver partida {id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/38",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"38"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver partidas de un jugador {id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/jugador/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"jugador",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver partida en curso de un jugador {id}",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/enCurso/1",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"enCurso",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear partida",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_jugador\": 30\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/crearPartida",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"crearPartida"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Abandonar partida",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_partida\": 38\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/abandonar",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"abandonar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Seleccionar casilla",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_partida\": 38,\r\n    \"id_casilla\": 423\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/seleccionarCasilla",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"seleccionarCasilla"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tirar dado",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAvY2F0YW4iLCJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwODAiLCJlbWFpbCI6Imx1aXNhQGNhdGFuLmNvbSJ9.Ypu0kgSWdPHkWh_WfJHRWP-QUrZgALsUEGrbktjFt1k",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_partida\": 38,\r\n    \"id_casilla\": 423\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8080/partidas/seleccionarCasilla",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8080",
+							"path": [
+								"partidas",
+								"seleccionarCasilla"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

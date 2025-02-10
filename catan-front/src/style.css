@@ -120,3 +120,25 @@ footer {
   justify-content: center;
 }
 
+.table.table-striped.table-bordered .custom-table-header {
+  --bs-table-bg: #8f1d27 !important;
+  --bs-table-color: #ffdd09 !important;
+  text-align: center;
+}
+
+.custom-page-link {
+  color: #8f1d27;
+  font-weight: bold;
+}
+
+.custom-page-link:hover {
+  color: #ffdd09;
+}
+
+.custom-active-page .custom-page-link {
+  background-color: #8f1d27 !important;
+  color: #ffdd09 !important;
+  border-color: #8f1d27 !important;
+}
+
+

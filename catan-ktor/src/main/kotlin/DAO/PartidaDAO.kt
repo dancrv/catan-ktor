@@ -142,6 +142,28 @@ class PartidaDAO {
         return partidas
     }
 
+    fun obtenerPartidaEnCurso(idJugador: Int): Partida? {
+        val sql = "SELECT * FROM partidas WHERE id_jugador = ? AND estado = ?"
+        val connection = Conexion.getConnection()
+        connection?.use {
+            val statement = it.prepareStatement(sql)
+            statement.setInt(1, idJugador)
+            statement.setString(2, "EN_CURSO")
+            val resultSet = statement.executeQuery()
+            while (resultSet.next()) {
+                val idPartida = resultSet.getInt("id")
+                val idJugador = resultSet.getInt("id_jugador")
+                val estado = resultSet.getString("estado")
+                val tablero = obtenerTableroDePartida(idPartida)
+                val tableroLleno = tablero.none { it.propietario == "LIBRE" }
+                val ganador = resultSet.getString("ganador")
+
+                return Partida(idPartida, idJugador, estado, tablero, tableroLleno, ganador)
+            }
+        }
+        return null
+    }
+
     fun obtenerPartida(id: Int): Partida? {
         val sql = "SELECT * FROM partidas WHERE id = ?"
         val connection = Conexion.getConnection()
