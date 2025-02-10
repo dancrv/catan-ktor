@@ -29,7 +29,7 @@
    ```
 3. Inicia la aplicación:
 ```bash
-	npm run dev
+   npm run dev
 ```
 4. La aplicación se ejecutará en:  
 🔗 **http://localhost:5173**
